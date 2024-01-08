@@ -1,4 +1,5 @@
-import { Accessor, Component, For } from 'solid-js'
+import { Accessor, Component, For, createSignal } from 'solid-js'
+import { cn } from '../../lib/utils'
 
 type NodeProps = {
 	nodeId: string
@@ -24,7 +25,9 @@ type NodeProps = {
 	onMouseLeave: (nodeId: string, inputIndex: number) => void
 }
 
-const Node: Component<NodeProps> = (props: NodeProps) => {
+const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
+	const [isGrabbingNode, setIsGrabbingNode] = createSignal<boolean>(false)
+
 	// Handle use clicking on a node input
 	function handleInputMouseEnter(inputRef: any, index: number) {
 		const centerX =
@@ -85,16 +88,22 @@ const Node: Component<NodeProps> = (props: NodeProps) => {
 	}
 	return (
 		<figure
-			class='rounded-md border p-6 shadow-md'
+			class={cn(
+				{ 'border-emerald-500': props.isSelected },
+				{ 'cursor-grabbing': isGrabbingNode() },
+				'z-40 h-[6rem] w-[11rem] rounded-md border bg-white p-2 shadow-md'
+			)}
 			style={{
 				transform: `translate(${props.nodePositionX}px, ${props.nodePositionY}px)`
 			}}
 			onMouseDown={(e) => {
 				e.stopPropagation()
+				setIsGrabbingNode(true)
 				props.onMouseDownHandler(props.nodeId, e)
 			}}
+			onMouseUp={() => setIsGrabbingNode(false)}
 		>
-			<div>
+			<div class='absolute -left-2 top-3 flex flex-col gap-2'>
 				<For each={[...Array(Number(props.numberInputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let inputRef: any = null
@@ -105,13 +114,18 @@ const Node: Component<NodeProps> = (props: NodeProps) => {
 									handleInputMouseEnter(inputRef, index())
 								}
 								onMouseLeave={() => handleMouseLeave(index())}
+								class='h-3 w-3 rounded-full bg-emerald-500'
 							></div>
 						)
 					}}
 				</For>
 			</div>
 
-			<div>
+			<p class='flex h-full select-none items-center justify-center rounded bg-emerald-50 text-2xl font-bold'>
+				{props.label}
+			</p>
+
+			<div class='absolute -right-2 top-3 flex flex-col gap-2'>
 				<For each={[...Array(Number(props.numberInputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let outputRef: any = null
@@ -121,6 +135,7 @@ const Node: Component<NodeProps> = (props: NodeProps) => {
 								onMouseDown={(e: any) =>
 									handleOutputMouseDown(outputRef, e, index())
 								}
+								class='h-3 w-3 rounded-full bg-amber-500'
 							></div>
 						)
 					}}
@@ -130,4 +145,4 @@ const Node: Component<NodeProps> = (props: NodeProps) => {
 	)
 }
 
-export default Node
+export default NodeComponent

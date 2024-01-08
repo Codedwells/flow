@@ -1,19 +1,14 @@
-// use directive error fix
-declare module 'solid-js' {
-	namespace JSX {
-		interface Directives {
-			clickOutside: (el: any, accesor: any) => void
-		}
-	}
-}
-
 import { Component, createSignal, onCleanup } from 'solid-js'
 import { cn } from '../lib/utils'
 import { FiTrash, FiPlus } from 'solid-icons/fi'
 
 type ButtonsComponentProps = {
 	showDelete: boolean
-	onClickAdd: (numberInputs: number, numberOuputs: number) => void
+	onClickAdd: (
+		numberInputs: number,
+		numberOuputs: number,
+		label: string
+	) => void
 	onClickDelete: () => void
 }
 
@@ -43,7 +38,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 		setIsOpen(false)
 
 		// Tell the parent component to add a node
-		props.onClickAdd(numberInputs(), numberOutputs())
+		props.onClickAdd(numberInputs(), numberOutputs(), 'Test Node')
 
 		// Reset the number of inputs and outputs
 		setNumberInputs(1)
@@ -65,6 +60,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 				<div
 					class={cn(
 						{ '!justify-center': !props.showDelete },
+						{ 'h-[9rem] flex-col !justify-end': isOpen() },
 						'flex w-full items-center justify-between gap-4'
 					)}
 				>
@@ -103,7 +99,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 					{ '!inline-block !h-[13rem] !w-[10rem]': isOpen() },
 					'h-0 w-0 transition-all duration-300'
 				)}
-				ref ={el=>handleClickOutside(el,()=>setIsOpen(false))}
+				ref={(el) => handleClickOutside(el, () => setIsOpen(false))}
 			>
 				<div
 					class={cn(

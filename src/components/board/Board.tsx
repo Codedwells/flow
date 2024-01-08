@@ -1,5 +1,6 @@
 import { Component, createSignal, onMount } from 'solid-js'
 import { cn } from '../../lib/utils'
+import FlowSettings from '../ButtonsComponent'
 
 const Board: Component = () => {
 	const [isGrabbingBoard, setIsGrabbingBoard] = createSignal<boolean>(false)
@@ -8,6 +9,7 @@ const Board: Component = () => {
 		x: number
 		y: number
 	}>({ x: -1, y: -1 })
+    const [selectedNode, setSelectedNode] = createSignal<string| null>(null)
 
 	function handleONMouseDown(event: any) {
 		// Set grabbing to true
@@ -51,8 +53,8 @@ const Board: Component = () => {
 					// Update the board scale
 					setScale(scale() + e.deltaY * -0.005)
 
-					// Restrict the scale to a max of 2 and a min of 1
-					setScale(Math.min(Math.max(1, scale()), 2))
+					// Restrict the scale to a max of 3 and a min of 1
+					setScale(Math.min(Math.max(1, scale()), 3))
 
 					// Apply the scale to the board
 					board.style.transform = `scale(${scale()})`
@@ -63,18 +65,33 @@ const Board: Component = () => {
 			)
 		}
 	})
+
+   function handleClickAdd(numberInputs: number, numberOutputs: number) {
+
+   }
+
+ function handleClickDelete() {
+
+ }
+
 	return (
 		<div id='boardWrapper' class='h-screen w-screen overflow-auto'>
+			<FlowSettings
+				onClickAdd={handleClickAdd}
+				onClickDelete={handleClickDelete}
+				showDelete={selectedNode() !== null}
+			/>
 			<div
 				id='board'
 				class={cn(
 					{ '!cursor-grabbing': isGrabbingBoard() },
-					'relative h-screen w-screen cursor-grab bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] transition-transform duration-500 ease-in-out [background-size:16px_16px]'
+					'relative h-screen w-screen cursor-grab bg-gray-400 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] transition-transform duration-300 ease-in-out [background-size:16px_16px]'
 				)}
 				onMouseDown={handleONMouseDown}
 				onMouseUp={handleOnMouseUp}
 				onMouseMove={handleOnMouseMove}
 			>
+				<div></div>
 			</div>
 		</div>
 	)

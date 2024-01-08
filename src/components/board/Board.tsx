@@ -1,6 +1,6 @@
 import { Component, createSignal, onMount } from 'solid-js'
 import { cn } from '../../lib/utils'
-import FlowSettings from '../ButtonsComponent'
+import FlowSettings from '../FlowComponent'
 
 const Board: Component = () => {
 	const [isGrabbingBoard, setIsGrabbingBoard] = createSignal<boolean>(false)

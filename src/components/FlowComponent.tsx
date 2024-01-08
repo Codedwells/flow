@@ -13,7 +13,7 @@ type ButtonsComponentProps = {
 }
 
 function handleClickOutside(el: any, accesor: any) {
-	const onClick = (e: any) => !el.contains(e.target) && accesor()?.()
+	const onClick = (e: any) => !el.contains(e.target) && accesor()
 	document.body.addEventListener('click', onClick)
 
 	onCleanup(() => document.body.removeEventListener('click', onClick))
@@ -23,15 +23,15 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 	props: ButtonsComponentProps
 ) => {
 	const [isOpen, setIsOpen] = createSignal<boolean>(false)
-	const [numberInputs, setNumberInputs] = createSignal<number>(1)
-	const [numberOutputs, setNumberOutputs] = createSignal<number>(1)
+	const [numberInputs, setNumberInputs] = createSignal<number>(0)
+	const [numberOutputs, setNumberOutputs] = createSignal<number>(0)
 
 	function handleAddNode() {
 		if (
 			numberInputs() > 4 ||
 			numberOutputs() > 4 ||
-			numberInputs() < 1 ||
-			numberOutputs() < 1
+			numberInputs() < 0 ||
+			numberOutputs() < 0
 		)
 			return
 
@@ -41,8 +41,8 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 		props.onClickAdd(numberInputs(), numberOutputs(), 'Test Node')
 
 		// Reset the number of inputs and outputs
-		setNumberInputs(1)
-		setNumberOutputs(1)
+		setNumberInputs(0)
+		setNumberOutputs(0)
 	}
 
 	return (
@@ -116,7 +116,11 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 					<input
 						type='number'
 						value={numberInputs()}
-						onInput={(e: any) => setNumberInputs(e.target.value)}
+						onInput={(e: any) =>
+							setNumberInputs(Number(e.target.value.trim()))
+						}
+						min={0}
+						max={4}
 						class='focus-visible:ring-ring h-10 w-full rounded-md border border-slate-200 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
 					/>
 				</div>
@@ -135,7 +139,11 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 					<input
 						type='number'
 						value={numberOutputs()}
-						onInput={(e: any) => setNumberOutputs(e.target.value)}
+						onInput={(e: any) =>
+							setNumberOutputs(Number(e.target.value.trim()))
+						}
+						min={0}
+						max={4}
 						class='focus-visible:ring-ring h-10 w-full rounded-md border border-slate-200 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
 					/>
 				</div>

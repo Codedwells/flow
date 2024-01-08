@@ -16,13 +16,13 @@ type NodeProps = {
 		positionOutputX: number,
 		positionOutputY: number
 	) => void
-	onMouseDownInputHandler: (
+	onMouseEnterInputHandler: (
 		nodeId: string,
 		inputIndex: number,
 		positionInputX: number,
 		positionInputY: number
 	) => void
-	onMouseLeave: (nodeId: string, inputIndex: number) => void
+	onMouseLeaveInputHandler: (nodeId: string, inputIndex: number) => void
 }
 
 const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
@@ -46,12 +46,12 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 				2
 
 		// Tell the parent about input being clicked
-		props.onMouseDownInputHandler(props.nodeId, index, centerX, centerY)
+		props.onMouseEnterInputHandler(props.nodeId, index, centerX, centerY)
 	}
 
 	// Handle mouse leaving a node input
 	function handleMouseLeave(index: number) {
-		props.onMouseLeave(props.nodeId, index)
+		props.onMouseLeaveInputHandler(props.nodeId, index)
 	}
 
 	// Handle user clicking on a node output
@@ -103,7 +103,7 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 			}}
 			onMouseUp={() => setIsGrabbingNode(false)}
 		>
-			<div class='absolute -left-2 top-3 flex flex-col gap-2'>
+			<div class='pointer-events-none absolute -left-2 top-3 flex flex-col gap-2'>
 				<For each={[...Array(Number(props.numberInputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let inputRef: any = null
@@ -114,8 +114,8 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 									handleInputMouseEnter(inputRef, index())
 								}
 								onMouseLeave={() => handleMouseLeave(index())}
-								class='h-3 w-3 rounded-full bg-emerald-500'
-							></div>
+								class='pointer-events-auto h-3 w-3 cursor-crosshair rounded-full bg-emerald-500'
+							/>
 						)
 					}}
 				</For>
@@ -125,8 +125,8 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 				{props.label}
 			</p>
 
-			<div class='absolute -right-2 top-3 flex flex-col gap-2'>
-				<For each={[...Array(Number(props.numberInputs)).keys()]}>
+			<div class='pointer-events-none absolute -right-2 top-3 flex flex-col gap-2'>
+				<For each={[...Array(Number(props.numberOutputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let outputRef: any = null
 						return (
@@ -135,8 +135,8 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 								onMouseDown={(e: any) =>
 									handleOutputMouseDown(outputRef, e, index())
 								}
-								class='h-3 w-3 rounded-full bg-amber-500'
-							></div>
+								class='pointer-events-auto h-3 w-3 cursor-crosshair rounded-full bg-amber-500'
+							/>
 						)
 					}}
 				</For>

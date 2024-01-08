@@ -152,7 +152,15 @@ const Board: Component = () => {
 		])
 	}
 
-	function handleClickDelete() {}
+	function handleClickDelete() {
+		// Filter out the selected node
+		const filteredNodes = nodes().filter(
+			(node) => node.id !== selectedNode()
+		)
+
+		// Update the nodes
+		setNodes(filteredNodes)
+	}
 
 	function handleOnMouseDownNode(nodeId: string, event: any) {
 		// Set the selected node

@@ -3,6 +3,7 @@ import {
 	Component,
 	For,
 	Setter,
+	createEffect,
 	createSignal,
 	onMount
 } from 'solid-js'
@@ -91,9 +92,15 @@ const Board: Component = () => {
 
 		// If user stops dragging a new edge
 		console.log(newEdge(), isInsideInput())
+
 		if (newEdge() !== null && isInsideInput() === null) {
+			console.log('here not inside input')
 			setNewEdge(null)
-		} else if (newEdge() !== null && isInsideInput() !== null) {
+		} else if (
+			newEdge() !== null &&
+			isInsideInput() !== null &&
+			isInsideInput()!.nodeId !== newEdge()!.nodeStartId
+		) {
 			const nodeStartId = newEdge()!.nodeStartId
 			const nodeEndId = isInsideInput()!.nodeId
 
@@ -190,6 +197,38 @@ const Board: Component = () => {
 					clickedNode.currentPosition.set({
 						x: clickedNode.prevPosition.get().x + deltaX / scale(),
 						y: clickedNode.prevPosition.get().y + deltaY / scale()
+					})
+
+					// Update the input edges position on node move
+					clickedNode.inputEdgeIds.get().forEach((edgeId) => {
+						const edge = edges().find((edge) => edge.id === edgeId)
+
+						if (edge) {
+							edge.currEndPosition.set({
+								x:
+									(edge.prevEndPosition.get().x + deltaX) /
+									scale(),
+								y:
+									(edge.prevEndPosition.get().y + deltaY) /
+									scale()
+							})
+						}
+					})
+
+					// Update the output edges position on node move
+					clickedNode.outputEdgeIds.get().forEach((edgeId) => {
+						const edge = edges().find((edge) => edge.id === edgeId)
+
+						if (edge) {
+							edge.currStartPosition.set({
+								x:
+									(edge.prevStartPosition.get().x + deltaX) /
+									scale(),
+								y:
+									(edge.prevStartPosition.get().y + deltaY) /
+									scale()
+							})
+						}
 					})
 				}
 			} else {
@@ -318,6 +357,30 @@ const Board: Component = () => {
 				x: clickedNode.currentPosition.get().x,
 				y: clickedNode.currentPosition.get().y
 			})
+
+			// Update the input edges position on node move
+			clickedNode.inputEdgeIds.get().forEach((edgeId) => {
+				const edge = edges().find((edge) => edge.id === edgeId)
+
+				if (edge) {
+					edge.prevEndPosition.set({
+						x: edge.currEndPosition.get().x * scale(),
+						y: edge.currEndPosition.get().y * scale()
+					})
+				}
+			})
+
+			// Update the output edges position on node move
+			clickedNode.outputEdgeIds.get().forEach((edgeId) => {
+				const edge = edges().find((edge) => edge.id === edgeId)
+
+				if (edge) {
+					edge.prevStartPosition.set({
+						x: edge.currStartPosition.get().x * scale(),
+						y: edge.currStartPosition.get().y * scale()
+					})
+				}
+			})
 		}
 	}
 
@@ -333,13 +396,13 @@ const Board: Component = () => {
 			positionX: inputPositionX,
 			positionY: inputPositionY
 		})
-
 	}
 
 	function handleOnMouseLeaveInput(nodeId: string, inputIndex: number) {
 		if (
-			isInsideInput()?.nodeId === nodeId &&
-			isInsideInput()?.inputIndex === inputIndex
+			isInsideInput() !== null &&
+			isInsideInput()!.nodeId === nodeId &&
+			isInsideInput()!.inputIndex === inputIndex
 		) {
 			return setIsInsideInput(null)
 		}
@@ -416,6 +479,10 @@ const Board: Component = () => {
 		}
 	}
 
+	createEffect(() => {
+		console.log(isInsideInput())
+	})
+
 	return (
 		<div id='boardWrapper' class='h-screen w-screen overflow-auto'>
 			<FlowSettings
@@ -428,7 +495,7 @@ const Board: Component = () => {
 				id='board'
 				class={cn(
 					{ '!cursor-grabbing': isGrabbingBoard() },
-					'relative h-screen w-screen cursor-grab bg-gray-400 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] transition-transform duration-300 ease-in-out [background-size:16px_16px]'
+					'relative h-screen w-screen cursor-grab bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] transition-transform duration-300 ease-in-out [background-size:16px_16px]'
 				)}
 				onMouseDown={handleOnMouseDownBoard}
 				onMouseUp={handleOnMouseUpBoard}

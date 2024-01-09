@@ -21,10 +21,10 @@ const NodeEdge: Component<NodeEdgeProps> = (props: NodeEdgeProps) => {
 			<path
 				class={cn(
 					{
-						'z-100 !stroke-yellow-500 !stroke-[3]': props.isSelected
+						'z-30 !stroke-yellow-500 !stroke-[3]': props.isSelected
 					},
 					{ '!stroke-emerald-400': props.isNew },
-					'pointer-events-auto cursor-pointer fill-transparent stroke-amber-500 stroke-2'
+					'pointer-events-none cursor-pointer fill-transparent stroke-amber-500 stroke-2'
 				)}
 				d={`M ${props.position.x0} ${props.position.y0} C ${
 					props.position.x0 +
@@ -37,6 +37,9 @@ const NodeEdge: Component<NodeEdgeProps> = (props: NodeEdgeProps) => {
 				}`}
 				onMouseDown={handleEdgeMouseDown}
 			/>
+
+          <g>
+          </g>
 		</svg>
 	)
 }

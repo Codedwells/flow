@@ -27,9 +27,13 @@ type NodeProps = {
 
 const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 	const [isGrabbingNode, setIsGrabbingNode] = createSignal<boolean>(false)
+    const [hoveredInput, setHoveredInput] = createSignal<number>(-1)
 
 	// Handle use clicking on a node input
 	function handleInputMouseEnter(inputRef: any, index: number) {
+        //Set the hovered input
+        setHoveredInput(index)
+
 		const centerX =
 			inputRef.getBoundingClientRect().left +
 			Math.abs(
@@ -51,6 +55,9 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 
 	// Handle mouse leaving a node input
 	function handleMouseLeave(index: number) {
+        // Reset the hovered input
+        setHoveredInput(-1)
+
 		props.onMouseLeaveInputHandler(props.nodeId, index)
 	}
 
@@ -91,7 +98,7 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 			class={cn(
 				{ 'border-emerald-500': props.isSelected },
 				{ 'cursor-grabbing': isGrabbingNode() },
-				'z-40 h-[6rem] w-[11rem] rounded-md border bg-white p-2 shadow-md'
+				'absolute z-80 h-[6rem] w-[11rem] rounded-md border bg-white p-2 shadow-md'
 			)}
 			style={{
 				transform: `translate(${props.nodePositionX}px, ${props.nodePositionY}px)`
@@ -103,7 +110,7 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 			}}
 			onMouseUp={() => setIsGrabbingNode(false)}
 		>
-			<div class='pointer-events-none absolute -left-2 top-3 flex flex-col gap-2'>
+			<div class='pointer-events-none absolute z-50 -left-5 top-3 flex flex-col gap-2'>
 				<For each={[...Array(Number(props.numberInputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let inputRef: any = null
@@ -114,28 +121,29 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 									handleInputMouseEnter(inputRef, index())
 								}
 								onMouseLeave={() => handleMouseLeave(index())}
-								class='pointer-events-auto h-3 w-3 cursor-crosshair rounded-full bg-emerald-500'
+								class='pointer-events-auto h-3 w-3 rounded-full bg-emerald-500'
 							/>
 						)
 					}}
 				</For>
 			</div>
 
-			<p class='flex h-full select-none items-center justify-center rounded bg-emerald-50 text-2xl font-bold'>
+			<p class='flex h-full select-none items-center cursor-pointer justify-center rounded bg-emerald-50 text-2xl font-bold'>
 				{props.label}
 			</p>
 
-			<div class='pointer-events-none absolute -right-2 top-3 flex flex-col gap-2'>
+			<div class='pointer-events-none absolute z-50 -right-5 top-3 flex flex-col gap-2'>
 				<For each={[...Array(Number(props.numberOutputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let outputRef: any = null
+                        const isHovered = hoveredInput() === index()
 						return (
 							<div
 								ref={outputRef}
 								onMouseDown={(e: any) =>
 									handleOutputMouseDown(outputRef, e, index())
 								}
-								class='pointer-events-auto h-3 w-3 cursor-crosshair rounded-full bg-amber-500'
+								class={cn({"!bg-sky-400":isHovered},'cursor-crosshair pointer-events-auto h-3 w-3 rounded-full bg-amber-500')}
 							/>
 						)
 					}}

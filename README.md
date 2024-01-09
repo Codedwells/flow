@@ -1,7 +1,7 @@
 ## Flow
 Flow is a simple node editor add, delete and join nodes
 
-![Flow website](./src/public/open-graph.webp)
+![Flow website](./src/assets/open-graph.webp)
 
 
 ### Flow is build with:

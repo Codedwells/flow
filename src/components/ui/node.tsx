@@ -98,7 +98,7 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 			class={cn(
 				{ 'border-emerald-500': props.isSelected },
 				{ 'cursor-grabbing': isGrabbingNode() },
-				'absolute z-80 h-[6rem] w-[11rem] rounded-md border bg-white p-2 shadow-md'
+				'absolute z-[100] h-[6rem] w-[11rem] rounded-md border bg-white p-2 shadow-md'
 			)}
 			style={{
 				transform: `translate(${props.nodePositionX}px, ${props.nodePositionY}px)`

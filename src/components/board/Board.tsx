@@ -61,6 +61,7 @@ const Board: Component = () => {
 		y: number
 	}>({ x: -1, y: -1 })
 	const [selectedNode, setSelectedNode] = createSignal<string | null>(null)
+	const [selectedEdge, setSelectedEdge] = createSignal<string | null>(null)
 
 	const [isInsideInput, setIsInsideInput] = createSignal<{
 		nodeId: string
@@ -77,6 +78,9 @@ const Board: Component = () => {
 		// Deselect the node if any was selected
 		setSelectedNode(null)
 
+		// Deselect the edge if any was selected
+		setSelectedEdge(null)
+
 		// Set grabbing to true
 		setIsGrabbingBoard(true)
 
@@ -90,11 +94,7 @@ const Board: Component = () => {
 		// Reset the click position
 		setClickPosition({ x: -1, y: -1 })
 
-		// If user stops dragging a new edge
-		console.log(newEdge(), isInsideInput())
-
 		if (newEdge() !== null && isInsideInput() === null) {
-			console.log('here not inside input')
 			setNewEdge(null)
 		} else if (
 			newEdge() !== null &&
@@ -345,6 +345,9 @@ const Board: Component = () => {
 		// Set the selected node
 		setSelectedNode(nodeId)
 
+		// Deselect the edge if any was selected
+		setSelectedEdge(null)
+
 		// Update the click position
 		setClickPosition({ x: event.x, y: event.y })
 
@@ -479,12 +482,65 @@ const Board: Component = () => {
 		}
 	}
 
+	// Handle user clicking on an edge
+	function handleOnMouseDownEdge(edgeId: string) {
+		console.log('edge mouse down')
+		if (selectedEdge() === edgeId) return setSelectedEdge(null)
+		// Deselect the node if any was selected
+		setSelectedNode(null)
+
+		// Set the selected edge
+		setSelectedEdge(edgeId)
+	}
+
+	function handleOnDeleteEdge(edgeId: string) {
+		// Find the deleted edge
+		const edgeToDelete = edges().find((edge) => edge.id === edgeId)
+
+		if (edgeToDelete) {
+			// Delete the edge  from start node
+			const startNode = nodes().find(
+				(node) => node.id === edgeToDelete.nodeStartId
+			)
+
+			// Update the start node
+			if (startNode) {
+				startNode.outputEdgeIds.set([
+					...startNode.outputEdgeIds
+						.get()
+						.filter((edgeId) => edgeId !== edgeToDelete.id)
+				])
+			}
+
+			// Delete the edge from end node
+			const endNode = nodes().find((node) => node.id === edgeToDelete.nodeEndId)
+
+            // Update the end node
+            if (endNode) {
+                endNode.inputEdgeIds.set([
+                    ...endNode.inputEdgeIds
+                        .get()
+                        .filter((edgeId) => edgeId !== edgeToDelete.id)
+                ])
+            }
+
+           // Delete the edge from the list of edges
+           setEdges([...edges().filter((edge) => edge.id !== edgeToDelete.id)])
+
+           // Deselect the edge
+           setSelectedEdge(null)
+		}
+	}
+
 	createEffect(() => {
 		console.log(isInsideInput())
 	})
 
 	return (
-		<div id='boardWrapper' class='h-screen w-screen overflow-auto'>
+		<div
+			id='boardWrapper'
+			class='h-screen w-screen select-none overflow-auto'
+		>
 			<FlowSettings
 				onClickAdd={handleClickAdd}
 				onClickDelete={handleClickDelete}
@@ -501,6 +557,26 @@ const Board: Component = () => {
 				onMouseUp={handleOnMouseUpBoard}
 				onMouseMove={handleOnMouseMoveBoard}
 			>
+				<For each={edges()}>
+					{(edge: Edge) => (
+						<NodeEdge
+							isSelected={selectedEdge() === edge.id}
+							isInsideInput={isInsideInput() !== null}
+							isNew={false}
+							position={{
+								x0: edge.currStartPosition.get().x,
+								y0: edge.currStartPosition.get().y,
+								x1: edge.currEndPosition.get().x,
+								y1: edge.currEndPosition.get().y
+							}}
+							onMouseDownEdge={() =>
+								handleOnMouseDownEdge(edge.id)
+							}
+							onClickDelete={() => handleOnDeleteEdge(edge.id)}
+						/>
+					)}
+				</For>
+
 				<For each={nodes()}>
 					{(node) => (
 						<NodeComponent
@@ -521,6 +597,7 @@ const Board: Component = () => {
 
 				{newEdge() !== null && (
 					<NodeEdge
+						isInsideInput={isInsideInput() !== null}
 						isSelected={false}
 						isNew={true}
 						position={{
@@ -533,23 +610,6 @@ const Board: Component = () => {
 						onClickDelete={() => {}}
 					/>
 				)}
-
-				<For each={edges()}>
-					{(edge: Edge) => (
-						<NodeEdge
-							isSelected={false}
-							isNew={false}
-							position={{
-								x0: edge.currStartPosition.get().x,
-								y0: edge.currStartPosition.get().y,
-								x1: edge.currEndPosition.get().x,
-								y1: edge.currEndPosition.get().y
-							}}
-							onMouseDownEdge={() => {}}
-							onClickDelete={() => {}}
-						/>
-					)}
-				</For>
 			</div>
 		</div>
 	)

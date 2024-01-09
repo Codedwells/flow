@@ -1,5 +1,4 @@
 import { cn } from '../lib/utils'
-import { IoClose } from 'solid-icons/io'
 import { FiTrash } from 'solid-icons/fi'
 import { AiOutlineSubnode } from 'solid-icons/ai'
 import { RiSystemMenu4Line } from 'solid-icons/ri'
@@ -57,10 +56,12 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 			)}
 		>
 			<div>
-				<img
-					src='/src/public/logo.svg'
-					class='mb-3 mt-2 w-[7rem] border-b pb-3'
-				/>
+				<a href='/'>
+					<img
+						src='/src/public/logo.svg'
+						class='mb-3 mt-2 w-[7rem] border-b pb-3'
+					/>
+				</a>
 
 				<div
 					class={cn(
@@ -76,7 +77,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 								'!hidden': !props.showDelete
 							},
 
-							'group/btn ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full bg-red-700/40 px-4 py-2 text-sm font-bold text-red-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl hover:bg-red-700/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-transparent active:border-red-700'
+							'group/btn ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border border-transparent bg-red-700/40 px-4 py-2 text-sm font-bold text-red-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl hover:bg-red-700/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-red-700 disabled:pointer-events-none disabled:opacity-50'
 						)}
 					>
 						<span class='sr-only'>Delete</span>
@@ -93,7 +94,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 							class={cn(
 								'group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-sky-200 bg-sky-200 px-4 py-2 text-sm font-bold text-sky-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-sky-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50',
 								{
-									'w-[8rem] bg-sky-200 hover:bg-sky-500 border-sky-200 hover:border-sky-200 hover:w-[8rem] space-x-2 hover:rounded-full hover:text-white':
+									'w-[8rem] space-x-2 border-sky-200 bg-sky-200 hover:w-[8rem] hover:rounded-full hover:border-sky-200 hover:bg-sky-500 hover:text-white':
 										!props.showDelete
 								}
 							)}

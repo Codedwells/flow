@@ -1,6 +1,9 @@
-import { Component, createSignal, onCleanup } from 'solid-js'
 import { cn } from '../lib/utils'
-import { FiTrash, FiPlus } from 'solid-icons/fi'
+import { IoClose } from 'solid-icons/io'
+import { FiTrash } from 'solid-icons/fi'
+import { AiOutlineSubnode } from 'solid-icons/ai'
+import { RiSystemMenu4Line } from 'solid-icons/ri'
+import { Component, Show, createSignal, onCleanup } from 'solid-js'
 
 type ButtonsComponentProps = {
 	showDelete: boolean
@@ -25,6 +28,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 	const [isOpen, setIsOpen] = createSignal<boolean>(false)
 	const [numberInputs, setNumberInputs] = createSignal<number>(0)
 	const [numberOutputs, setNumberOutputs] = createSignal<number>(0)
+	const [nodeLabel, setNodeLabel] = createSignal<string>('Test Node')
 
 	function handleAddNode() {
 		if (
@@ -38,7 +42,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 		setIsOpen(false)
 
 		// Tell the parent component to add a node
-		props.onClickAdd(numberInputs(), numberOutputs(), 'Test Node')
+		props.onClickAdd(numberInputs(), numberOutputs(), nodeLabel())
 
 		// Reset the number of inputs and outputs
 		setNumberInputs(0)
@@ -60,7 +64,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 				<div
 					class={cn(
 						{ '!justify-center': !props.showDelete },
-						{ 'h-[9rem] flex-col !justify-end': isOpen() },
+						{ 'h-[11rem] flex-col !justify-end': isOpen() },
 						'flex w-full items-center justify-between gap-4'
 					)}
 				>
@@ -81,16 +85,32 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 						</span>
 					</button>
 
-					<button
-						onClick={() => setIsOpen((prev) => !prev)}
-						class='group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-emerald-200 bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-emerald-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50'
-					>
-						<span class='sr-only'>Add</span>
-						<FiPlus class='h-6 w-6 group-hover/btn:mr-2 group-hover/btn:h-4 group-hover/btn:w-4' />{' '}
-						<span class='hidden group-hover/add:inline-block'>
-							Add
-						</span>
-					</button>
+					<Show when={isOpen() == false}>
+						<button
+							onClick={() => setIsOpen(true)}
+							class='group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-emerald-200 bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-emerald-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50'
+						>
+							<span class='sr-only'>Menu</span>
+							<RiSystemMenu4Line class='h-6 w-6 group-hover/btn:mr-2 group-hover/btn:h-4 group-hover/btn:w-4' />
+
+							<span class='hidden group-hover/add:inline-block'>
+								Menu
+							</span>
+						</button>
+					</Show>
+
+					<Show when={isOpen() == true}>
+						<button
+							onClick={handleAddNode}
+							class='group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-emerald-200 bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-emerald-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50'
+						>
+							<span class='sr-only'>Add Node</span>
+							<AiOutlineSubnode class='h-7 w-7 group-hover/btn:mr-2 group-hover/btn:h-4 group-hover/btn:w-4' />{' '}
+							<span class='hidden group-hover/add:inline-block'>
+								Node
+							</span>
+						</button>
+					</Show>
 				</div>
 			</div>
 
@@ -147,17 +167,24 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 						class='focus-visible:ring-ring h-10 w-full rounded-md border border-slate-200 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
 					/>
 				</div>
-
-				<button
-					onClick={handleAddNode}
+				<div
 					class={cn(
 						{ '!hidden': !isOpen() },
-						'group/node ring-offset-background focus-visible:ring-ring mt-2 inline-flex h-10 w-full items-center justify-center whitespace-nowrap rounded-xl border-2 border-emerald-500 px-4 py-2 text-sm font-bold text-emerald-500 transition-all duration-500 ease-in-out hover:border-emerald-200 hover:bg-emerald-200 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-emerald-500 active:bg-transparent active:opacity-50 disabled:pointer-events-none disabled:opacity-50'
+						'mt-2 flex flex-col gap-2'
 					)}
 				>
-					<span class='sr-only'>Add Node</span>
-					<span>Add Node</span>
-				</button>
+					<label class='text-sm font-bold text-slate-800'>
+						Node label
+					</label>
+					<input
+						type='text'
+						value={nodeLabel()}
+						onInput={(e: any) =>
+							setNodeLabel(e.target.value.trim())
+						}
+						class='focus-visible:ring-ring h-10 w-full rounded-md border border-slate-200 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
+					/>
+				</div>
 			</div>
 		</section>
 	)

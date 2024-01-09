@@ -110,17 +110,20 @@ const Board: Component = () => {
 			const boardWrapper = document.getElementById('boardWrapper')
 
 			if (nodeStart && nodeEnd && boardWrapper) {
+				const edgeId = `_edge_${nodeStart.id}_${
+					newEdge()!.outputIndex
+				}_${nodeEnd.id}_${isInsideInput()!.inputIndex}`
+
+                // Check if the edge already exists
+                if(edges().find(edge => edge.id === edgeId)) return setNewEdge(null)
+
 				nodeStart.outputEdgeIds.set([
 					...nodeStart.outputEdgeIds.get(),
-					`_edge_${nodeStart.id}_${newEdge()!.outputIndex}_${
-						nodeEnd.id
-					}_${isInsideInput()!.inputIndex}`
+					edgeId
 				])
 				nodeEnd.inputEdgeIds.set([
 					...nodeEnd.inputEdgeIds.get(),
-					`_edge_${nodeStart.id}_${newEdge()!.outputIndex}_${
-						nodeEnd.id
-					}_${isInsideInput()!.inputIndex}`
+					edgeId
 				])
 
 				newEdge()!.prevStartPosition.set((prev) => {
@@ -167,9 +170,7 @@ const Board: Component = () => {
 					...edges(),
 					{
 						...newEdge()!,
-						id: `_edge_${nodeStart.id}_${newEdge()!.outputIndex}_${
-							nodeEnd.id
-						}_${isInsideInput()!.inputIndex}`,
+						id: edgeId,
 						nodeEndId: nodeEnd.id,
 						nodeEndIndex: isInsideInput()!.inputIndex
 					}
@@ -513,22 +514,24 @@ const Board: Component = () => {
 			}
 
 			// Delete the edge from end node
-			const endNode = nodes().find((node) => node.id === edgeToDelete.nodeEndId)
+			const endNode = nodes().find(
+				(node) => node.id === edgeToDelete.nodeEndId
+			)
 
-            // Update the end node
-            if (endNode) {
-                endNode.inputEdgeIds.set([
-                    ...endNode.inputEdgeIds
-                        .get()
-                        .filter((edgeId) => edgeId !== edgeToDelete.id)
-                ])
-            }
+			// Update the end node
+			if (endNode) {
+				endNode.inputEdgeIds.set([
+					...endNode.inputEdgeIds
+						.get()
+						.filter((edgeId) => edgeId !== edgeToDelete.id)
+				])
+			}
 
-           // Delete the edge from the list of edges
-           setEdges([...edges().filter((edge) => edge.id !== edgeToDelete.id)])
+			// Delete the edge from the list of edges
+			setEdges([...edges().filter((edge) => edge.id !== edgeToDelete.id)])
 
-           // Deselect the edge
-           setSelectedEdge(null)
+			// Deselect the edge
+			setSelectedEdge(null)
 		}
 	}
 

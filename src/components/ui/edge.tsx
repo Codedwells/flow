@@ -83,12 +83,6 @@ const NodeEdge: Component<NodeEdgeProps> = (props: NodeEdgeProps) => {
 				})`}
 				onMouseDown={handleOnClickDelete}
 			>
-				<circle
-					class='fill-white stroke-amber-500 stroke-2'
-					cx='0'
-					cy='0'
-					r='14'
-				/>
 				<CgTrash class='flex h-4 w-4 flex-col bg-red-500' />
 			</g>
 		</svg>

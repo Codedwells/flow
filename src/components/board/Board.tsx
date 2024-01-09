@@ -3,14 +3,13 @@ import {
 	Component,
 	For,
 	Setter,
-	createEffect,
 	createSignal,
 	onMount
 } from 'solid-js'
-import { cn } from '../../lib/utils'
-import FlowSettings from '../FlowComponent'
-import NodeComponent from '../ui/node'
 import NodeEdge from '../ui/edge'
+import { cn } from '../../lib/utils'
+import NodeComponent from '../ui/node'
+import FlowSettings from '../FlowComponent'
 
 type TNode = {
 	id: string
@@ -114,8 +113,9 @@ const Board: Component = () => {
 					newEdge()!.outputIndex
 				}_${nodeEnd.id}_${isInsideInput()!.inputIndex}`
 
-                // Check if the edge already exists
-                if(edges().find(edge => edge.id === edgeId)) return setNewEdge(null)
+				// Check if the edge already exists
+				if (edges().find((edge) => edge.id === edgeId))
+					return setNewEdge(null)
 
 				nodeStart.outputEdgeIds.set([
 					...nodeStart.outputEdgeIds.get(),
@@ -485,7 +485,6 @@ const Board: Component = () => {
 
 	// Handle user clicking on an edge
 	function handleOnMouseDownEdge(edgeId: string) {
-		console.log('edge mouse down')
 		if (selectedEdge() === edgeId) return setSelectedEdge(null)
 		// Deselect the node if any was selected
 		setSelectedNode(null)
@@ -535,14 +534,10 @@ const Board: Component = () => {
 		}
 	}
 
-	createEffect(() => {
-		console.log(isInsideInput())
-	})
-
 	return (
 		<div
 			id='boardWrapper'
-			class='h-screen w-screen select-none overflow-auto'
+			class='hidden lg:block h-screen w-screen select-none overflow-auto'
 		>
 			<FlowSettings
 				onClickAdd={handleClickAdd}

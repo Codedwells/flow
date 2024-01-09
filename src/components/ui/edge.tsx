@@ -35,13 +35,11 @@ const NodeEdge: Component<NodeEdgeProps> = (props: NodeEdgeProps) => {
 
 	function handleEdgeMouseDown(event: any) {
 		event.stopPropagation()
-		console.log('edge mouse down')
 
 		props.onMouseDownEdge(event)
 	}
 
 	function handleOnClickDelete(event: any) {
-		console.log('edge delete')
 		event.stopPropagation()
 
 		props.onClickDelete()
@@ -56,9 +54,9 @@ const NodeEdge: Component<NodeEdgeProps> = (props: NodeEdgeProps) => {
 			<path
 				class={cn(
 					{
-						'!stroke-sky-500 !stroke-[5]': props.isSelected
+						'!stroke-amber-600 !stroke-[3]': props.isSelected
 					},
-					{ '!stroke-emerald-400': props.isNew },
+					{ '!stroke-amber-300': props.isNew },
 					'cursor-pointer fill-transparent stroke-amber-500 stroke-2'
 				)}
 				d={`M ${props.position.x0} ${props.position.y0} C ${
@@ -83,7 +81,8 @@ const NodeEdge: Component<NodeEdgeProps> = (props: NodeEdgeProps) => {
 				})`}
 				onMouseDown={handleOnClickDelete}
 			>
-				<CgTrash class='flex h-4 w-4 flex-col bg-red-500' />
+            <circle class='fill-red-700' cx='7.5' cy='7.5' r='12' />
+				<CgTrash class='flex h-6 w-6 flex-col text-white' />
 			</g>
 		</svg>
 	)

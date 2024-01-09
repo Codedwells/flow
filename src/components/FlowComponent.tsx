@@ -53,13 +53,14 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 		<section
 			class={cn(
 				{ 'gap-5': isOpen() },
-				'absolute right-0 z-30 mr-2 mt-2 flex h-fit rounded-lg border bg-white p-4 shadow-lg'
+				'absolute right-0 z-[50] mr-2 mt-2 flex h-fit rounded-lg border bg-white p-4 shadow-lg'
 			)}
 		>
 			<div>
-				<p class='mb-3 border-b-2 pb-2 text-center text-3xl font-bold'>
-					Flow
-				</p>
+				<img
+					src='/src/public/logo.svg'
+					class='mb-3 mt-2 w-[7rem] border-b pb-3'
+				/>
 
 				<div
 					class={cn(
@@ -74,7 +75,8 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 							{
 								'!hidden': !props.showDelete
 							},
-							'group/btn ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full bg-red-900 px-4 py-2 text-sm font-bold text-slate-200 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl hover:bg-red-900/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
+
+							'group/btn ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full bg-red-700/40 px-4 py-2 text-sm font-bold text-red-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl hover:bg-red-700/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-transparent active:border-red-700'
 						)}
 					>
 						<span class='sr-only'>Delete</span>
@@ -88,12 +90,31 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 					<Show when={isOpen() == false}>
 						<button
 							onClick={() => setIsOpen(true)}
-							class='group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-emerald-200 bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-emerald-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50'
+							class={cn(
+								'group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-sky-200 bg-sky-200 px-4 py-2 text-sm font-bold text-sky-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-sky-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50',
+								{
+									'w-[8rem] bg-sky-200 hover:bg-sky-500 border-sky-200 hover:border-sky-200 hover:w-[8rem] space-x-2 hover:rounded-full hover:text-white':
+										!props.showDelete
+								}
+							)}
 						>
 							<span class='sr-only'>Menu</span>
-							<RiSystemMenu4Line class='h-6 w-6 group-hover/btn:mr-2 group-hover/btn:h-4 group-hover/btn:w-4' />
+							<RiSystemMenu4Line
+								class={cn(
+									'h-6 w-6 group-hover/btn:mr-2 group-hover/btn:h-4 group-hover/btn:w-4',
+									{
+										'mr-2 group-hover/btn:h-4 group-hover/btn:w-4':
+											!props.showDelete
+									}
+								)}
+							/>
 
-							<span class='hidden group-hover/add:inline-block'>
+							<span
+								class={cn(
+									'hidden group-hover/add:inline-block',
+									{ 'inline-block': !props.showDelete }
+								)}
+							>
 								Menu
 							</span>
 						</button>
@@ -102,7 +123,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 					<Show when={isOpen() == true}>
 						<button
 							onClick={handleAddNode}
-							class='group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-emerald-200 bg-emerald-200 px-4 py-2 text-sm font-bold text-emerald-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-emerald-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50'
+							class='group/add ring-offset-background focus-visible:ring-ring inline-flex h-10 w-10 items-center justify-center whitespace-nowrap rounded-full border-2 border-sky-200 bg-sky-200 px-4 py-2 text-sm font-bold text-sky-800 transition-all duration-500 ease-in-out hover:w-[6rem] hover:space-x-2 hover:rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:border-sky-800 active:opacity-50 disabled:pointer-events-none disabled:opacity-50'
 						>
 							<span class='sr-only'>Add Node</span>
 							<AiOutlineSubnode class='h-7 w-7 group-hover/btn:mr-2 group-hover/btn:h-4 group-hover/btn:w-4' />{' '}
@@ -179,6 +200,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 					<input
 						type='text'
 						value={nodeLabel()}
+						maxLength={11}
 						onInput={(e: any) =>
 							setNodeLabel(e.target.value.trim())
 						}

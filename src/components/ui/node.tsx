@@ -1,5 +1,5 @@
-import { Accessor, Component, For, createSignal } from 'solid-js'
 import { cn } from '../../lib/utils'
+import { Accessor, Component, For, createSignal } from 'solid-js'
 
 type NodeProps = {
 	nodeId: string
@@ -27,12 +27,12 @@ type NodeProps = {
 
 const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 	const [isGrabbingNode, setIsGrabbingNode] = createSignal<boolean>(false)
-    const [hoveredInput, setHoveredInput] = createSignal<number>(-1)
+	const [hoveredInput, setHoveredInput] = createSignal<number>(-1)
 
 	// Handle use clicking on a node input
 	function handleInputMouseEnter(inputRef: any, index: number) {
-        //Set the hovered input
-        setHoveredInput(index)
+		//Set the hovered input
+		setHoveredInput(index)
 
 		const centerX =
 			inputRef.getBoundingClientRect().left +
@@ -55,8 +55,8 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 
 	// Handle mouse leaving a node input
 	function handleMouseLeave(index: number) {
-        // Reset the hovered input
-        setHoveredInput(-1)
+		// Reset the hovered input
+		setHoveredInput(-1)
 
 		props.onMouseLeaveInputHandler(props.nodeId, index)
 	}
@@ -96,9 +96,9 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 	return (
 		<figure
 			class={cn(
-				{ 'border-emerald-500': props.isSelected },
+				{ 'border-sky-500': props.isSelected },
 				{ 'cursor-grabbing': isGrabbingNode() },
-				'absolute z-[100] h-[6rem] w-[11rem] rounded-md border bg-white p-2 shadow-md'
+				'absolute z-[40] h-[6rem] w-[11rem] rounded-md border bg-white p-2 shadow-lg'
 			)}
 			style={{
 				transform: `translate(${props.nodePositionX}px, ${props.nodePositionY}px)`
@@ -110,7 +110,7 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 			}}
 			onMouseUp={() => setIsGrabbingNode(false)}
 		>
-			<div class='pointer-events-none absolute z-50 -left-5 top-3 flex flex-col gap-2'>
+			<div class='pointer-events-none absolute -left-5 top-0 z-50 flex h-full flex-col items-center justify-center gap-2'>
 				<For each={[...Array(Number(props.numberInputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let inputRef: any = null
@@ -128,22 +128,25 @@ const NodeComponent: Component<NodeProps> = (props: NodeProps) => {
 				</For>
 			</div>
 
-			<p class='flex h-full select-none items-center cursor-pointer justify-center rounded bg-emerald-50 text-2xl font-bold'>
+			<p class='flex h-full cursor-pointer select-none items-center w-full justify-center truncate rounded bg-sky-50 text-2xl font-bold'>
 				{props.label}
 			</p>
 
-			<div class='pointer-events-none absolute z-50 -right-5 top-3 flex flex-col gap-2'>
+			<div class='pointer-events-none absolute -right-5 top-0 z-50 flex h-full flex-col items-center justify-center gap-2'>
 				<For each={[...Array(Number(props.numberOutputs)).keys()]}>
 					{(_, index: Accessor<number>) => {
 						let outputRef: any = null
-                        const isHovered = hoveredInput() === index()
+						const isHovered = hoveredInput() === index()
 						return (
 							<div
 								ref={outputRef}
 								onMouseDown={(e: any) =>
 									handleOutputMouseDown(outputRef, e, index())
 								}
-								class={cn({"!bg-sky-400":isHovered},'cursor-crosshair pointer-events-auto h-3 w-3 rounded-full bg-amber-500')}
+								class={cn(
+									{ '!bg-sky-400': isHovered },
+									'pointer-events-auto h-3 w-3 cursor-crosshair rounded-full bg-amber-500'
+								)}
 							/>
 						)
 					}}

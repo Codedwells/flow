@@ -58,7 +58,7 @@ const FlowSettings: Component<ButtonsComponentProps> = (
 			<div>
 				<a href='/'>
 					<img
-						src='/src/public/logo.svg'
+						src='/src/assets/logo.svg'
 						class='mb-3 mt-2 w-[7rem] border-b pb-3'
 					/>
 				</a>
